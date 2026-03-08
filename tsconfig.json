@@ -1,0 +1,17 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "paths": {
+      "@/*": [
+        "./*"
+      ]
+    }
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    ".expo/types/**/*.ts",
+    "expo-env.d.ts"
+, "app/Schedule.jsx", "app/NutritionLog/Nutrition.jsx", "app/index.jsx", "app/Home.jsx", "app/Gymfinder.jsx", "app/ActivityLog.jsx", "app/_layout.jsx", "components/Button.jsx", "constants/icons.js"  ]
+}
