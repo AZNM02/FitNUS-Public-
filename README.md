@@ -206,7 +206,7 @@ npm install
 ### 3. Configure environment variables
 Create a `.env` file (or configure via EAS) in the project root:
 ```env
-EXPO_PUBLIC_API_BASE_URL=http://<your-server-ip>:3000
+EXPO_PUBLIC_API_BASE_URL=http://<your-server-ip>:5001
 EXPO_PUBLIC_GOOGLE_MAPS_API_KEY=<your-google-maps-api-key>
 ```
 

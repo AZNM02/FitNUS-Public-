@@ -9,14 +9,6 @@ const AddExercise = () => {
   const [Reps, SetReps] = useState('');
   const [Distance, SetDistance] = useState('');
 
-  const addactivity = () => {
-    console.warn('Exercise Added.');
-    SetExerciseName('');
-    SetExerciseDuration('');
-    Setweight('');
-    SetReps('');
-    SetDistance('');
-  }
   function exerciseadd(){
     const exerciseData ={
       name:ExerciseName,

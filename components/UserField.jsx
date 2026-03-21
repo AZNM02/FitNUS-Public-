@@ -1,29 +1,29 @@
 import React from 'react';
+import { TextInput, StyleSheet } from 'react-native';
 
 const TextInputUser = ({ title }) => {
   const [value, setValue] = React.useState('');
 
   return (
-    <input
+    <TextInput
       style={styles.input}
-      onChange={e => setValue(e.target.value)}
+      onChangeText={setValue}
       value={value}
       placeholder={title}
     />
   );
 };
 
-const styles = {
+const styles = StyleSheet.create({
   input: {
     height: 40,
     margin: 12,
     borderWidth: 1,
     padding: 10,
-    borderStyle: 'solid',
     borderColor: '#ccc',
     borderRadius: 4,
     fontSize: 16,
   },
-};
+});
 
 export default TextInputUser;
