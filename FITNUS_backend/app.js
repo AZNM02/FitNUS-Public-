@@ -1,24 +1,13 @@
-require("dotenv").config();
 const express = require("express");
 const app = express();
-const mongoose = require("mongoose");
 const { body, validationResult } = require("express-validator");
 
 app.use(express.json());
 
-const mongoUrl = process.env.MONGODB_URI;
-mongoose.connect(mongoUrl).then(() => {
-    console.log("Connected to Database");
-}).catch((e) => {
-    console.log(e);
-});
+const Meal = require('./MealDetails');
+const Workout = require('./WorkoutDetails');
 
-require('./MealDetails');
-require('./WorkoutDetails');
-const Meal = mongoose.model("MealInfo");
-const Workout = mongoose.model("WorkoutInfo");
-
-// ── Validation chains (reused across POST and PUT) ───────────
+// ── Validation chains ────────────────────────────────────────
 
 const mealValidators = [
     body('name').optional().trim().notEmpty().withMessage('Meal name cannot be blank'),
@@ -195,6 +184,4 @@ app.get('/exercises', async (req, res) => {
     }
 });
 
-app.listen(5001, () => {
-    console.log("Server started.");
-});
+module.exports = app;

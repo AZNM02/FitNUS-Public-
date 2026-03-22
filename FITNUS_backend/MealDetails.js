@@ -11,4 +11,4 @@ const MealDetailSchema = new mongoose.Schema({
     collection: "MealInfo"
 });
 
-mongoose.model("MealInfo", MealDetailSchema);
+module.exports = mongoose.models.MealInfo || mongoose.model("MealInfo", MealDetailSchema);

@@ -13,4 +13,4 @@ const WorkoutDetailSchema = new mongoose.Schema({
     collection: "WorkoutInfo"
 });
 
-mongoose.model("WorkoutInfo", WorkoutDetailSchema);
+module.exports = mongoose.models.WorkoutInfo || mongoose.model("WorkoutInfo", WorkoutDetailSchema);
