@@ -11,19 +11,19 @@ function Home() {
       <View style={styles.buttonContainer}>
         <Button
           title="Activity Log"
-          handlePress={() => router.push('/Activity')}
+          handlePress={() => router.push('/Activities')}
           style={[styles.button, styles.activityButton]}
           textStyle={styles.buttonText}
         />
         <Button
           title="Nutrition Log"
-          handlePress={() => router.push('/Nutrition')}
+          handlePress={() => router.push('/NutritionLog')}
           style={[styles.button, styles.nutritionButton]}
           textStyle={styles.buttonText}
         />
         <Button
           title="Nearest Gyms"
-          handlePress={() => router.push('/GymFinder/Gymfinder')}
+          handlePress={() => router.push('/Gymfinder')}
           style={[styles.button, styles.gymButton]}
           textStyle={styles.buttonText}
         />
