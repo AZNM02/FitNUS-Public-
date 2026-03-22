@@ -2,12 +2,16 @@ import React, { createContext, useCallback, useContext, useState } from 'react';
 import {
   addExercise as apiAddExercise,
   addMeal as apiAddMeal,
+  deleteExercise as apiDeleteExercise,
+  deleteMeal as apiDeleteMeal,
   Exercise,
   getExercises,
   getMeals,
   Meal,
   NewExercise,
   NewMeal,
+  updateExercise as apiUpdateExercise,
+  updateMeal as apiUpdateMeal,
 } from '../services/api';
 
 interface FitnessContextType {
@@ -19,6 +23,10 @@ interface FitnessContextType {
   refreshExercises: () => Promise<void>;
   addMeal: (data: NewMeal) => Promise<void>;
   addExercise: (data: NewExercise) => Promise<void>;
+  updateMeal: (id: string, data: Partial<NewMeal>) => Promise<void>;
+  updateExercise: (id: string, data: Partial<NewExercise>) => Promise<void>;
+  deleteMeal: (id: string) => Promise<void>;
+  deleteExercise: (id: string) => Promise<void>;
 }
 
 const FitnessContext = createContext<FitnessContextType | null>(null);
@@ -69,9 +77,54 @@ export const FitnessProvider: React.FC<{ children: React.ReactNode }> = ({ child
     [refreshExercises]
   );
 
+  const updateMeal = useCallback(
+    async (id: string, data: Partial<NewMeal>) => {
+      await apiUpdateMeal(id, data);
+      await refreshMeals();
+    },
+    [refreshMeals]
+  );
+
+  const updateExercise = useCallback(
+    async (id: string, data: Partial<NewExercise>) => {
+      await apiUpdateExercise(id, data);
+      await refreshExercises();
+    },
+    [refreshExercises]
+  );
+
+  const deleteMeal = useCallback(
+    async (id: string) => {
+      await apiDeleteMeal(id);
+      setMeals((prev) => prev.filter((m) => m._id !== id));
+    },
+    []
+  );
+
+  const deleteExercise = useCallback(
+    async (id: string) => {
+      await apiDeleteExercise(id);
+      setExercises((prev) => prev.filter((e) => e._id !== id));
+    },
+    []
+  );
+
   return (
     <FitnessContext.Provider
-      value={{ meals, exercises, isLoading, error, refreshMeals, refreshExercises, addMeal, addExercise }}
+      value={{
+        meals,
+        exercises,
+        isLoading,
+        error,
+        refreshMeals,
+        refreshExercises,
+        addMeal,
+        addExercise,
+        updateMeal,
+        updateExercise,
+        deleteMeal,
+        deleteExercise,
+      }}
     >
       {children}
     </FitnessContext.Provider>
