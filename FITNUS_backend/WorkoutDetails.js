@@ -1,13 +1,15 @@
 const mongoose = require("mongoose");
 
 const WorkoutDetailSchema = new mongoose.Schema({
-    name: String,
-    duration: String,
-    weight: String,
-    reps: String,
-    distance: String,
-    date: {type: Date, default: Date.now},
-},{
+    name: { type: String, required: true },
+    duration: Number,
+    sets: Number,
+    weight: Number,
+    reps: Number,
+    distance: Number,
+    notes: String,
+    date: { type: Date, default: Date.now },
+}, {
     collection: "WorkoutInfo"
 });
 
