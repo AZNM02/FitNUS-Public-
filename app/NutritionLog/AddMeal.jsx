@@ -1,8 +1,10 @@
-import { Text, View, StyleSheet, TextInput, Button } from "react-native";
-import { useState } from "react";
-import axios from "axios";
+import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
+import { useState } from 'react';
+import { useFitnessContext } from '../../context/FitnessContext';
 
 const AddMeal = () => {
+  const { addMeal } = useFitnessContext();
+
   const [MealName, SetMealName] = useState('');
   const [Calories, SetCalories] = useState('');
   const [error, setError] = useState('');
@@ -19,15 +21,13 @@ const AddMeal = () => {
       return;
     }
 
-    const apiBaseUrl = process.env.EXPO_PUBLIC_API_BASE_URL;
-    axios
-      .post(`${apiBaseUrl}/addmeal`, { name: MealName.trim(), calories: cal })
+    addMeal({ name: MealName.trim(), calories: cal })
       .then(() => {
         SetMealName('');
         SetCalories('');
       })
-      .catch((e) => {
-        const msg = e.response?.data?.errors?.[0]?.msg || e.message;
+      .catch((e: any) => {
+        const msg = e.response?.data?.errors?.[0]?.msg ?? e.message;
         setError(msg);
       });
   }

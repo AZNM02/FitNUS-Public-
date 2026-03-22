@@ -1,8 +1,10 @@
-import { Text, View, StyleSheet, Button, TextInput } from "react-native";
-import { useState } from "react";
-import axios from "axios";
+import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
+import { useState } from 'react';
+import { useFitnessContext } from '../../context/FitnessContext';
 
 const AddExercise = () => {
+  const { addExercise } = useFitnessContext();
+
   const [ExerciseName, SetExerciseName] = useState('');
   const [ExerciseDuration, SetExerciseDuration] = useState('');
   const [Weight, Setweight] = useState('');
@@ -10,7 +12,7 @@ const AddExercise = () => {
   const [Distance, SetDistance] = useState('');
   const [error, setError] = useState('');
 
-  const parseOptionalFloat = (val) => {
+  const parseOptionalFloat = (val: string) => {
     if (val.trim() === '') return undefined;
     const n = parseFloat(val);
     return isNaN(n) || n < 0 ? null : n;
@@ -35,17 +37,13 @@ const AddExercise = () => {
       }
     }
 
-    const exerciseData = {
+    addExercise({
       name: ExerciseName.trim(),
       duration: parseOptionalFloat(ExerciseDuration),
       weight: parseOptionalFloat(Weight),
       reps: parseOptionalFloat(Reps),
       distance: parseOptionalFloat(Distance),
-    };
-
-    const apiBaseUrl = process.env.EXPO_PUBLIC_API_BASE_URL;
-    axios
-      .post(`${apiBaseUrl}/addworkout`, exerciseData)
+    })
       .then(() => {
         SetExerciseName('');
         SetExerciseDuration('');
@@ -53,8 +51,8 @@ const AddExercise = () => {
         SetReps('');
         SetDistance('');
       })
-      .catch((e) => {
-        const msg = e.response?.data?.errors?.[0]?.msg || e.message;
+      .catch((e: any) => {
+        const msg = e.response?.data?.errors?.[0]?.msg ?? e.message;
         setError(msg);
       });
   }

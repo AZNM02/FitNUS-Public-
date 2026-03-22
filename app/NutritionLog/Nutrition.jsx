@@ -1,28 +1,41 @@
-import React, { useEffect, useState } from 'react';
-import { Text, View, FlatList, StyleSheet} from "react-native";
-import axios from 'axios';
+import React, { useEffect } from 'react';
+import { ActivityIndicator, FlatList, StyleSheet, Text, View } from 'react-native';
+import { useFitnessContext } from '../../context/FitnessContext';
 
 const Nutrition = () => {
-  const [meals, setMeals] = useState([]);
+  const { meals, isLoading, error, refreshMeals } = useFitnessContext();
 
   useEffect(() => {
-    const apiBaseUrl = process.env.EXPO_PUBLIC_API_BASE_URL;
-    axios.get(`${apiBaseUrl}/meals`).then(meals => setMeals(meals.data)).catch((e)=>console.log(e))
-
-   
+    refreshMeals();
   }, []);
+
+  if (isLoading) {
+    return (
+      <View style={styles.centered}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Nutrition Log</Text>
+      {error && <Text style={styles.error}>{error}</Text>}
       <FlatList
         data={meals}
         keyExtractor={(item) => item._id}
         renderItem={({ item }) => (
           <View style={styles.mealItem}>
             <Text style={styles.mealName}>{item.name}</Text>
-            <Text style={styles.mealCalories}>{item.calories} calories</Text>
-            <Text style={styles.mealCalories}>Date Added: {item.date} </Text>
+            <Text style={styles.mealSub}>{item.calories} kcal</Text>
+            {(item.protein > 0 || item.carbs > 0 || item.fat > 0) && (
+              <Text style={styles.mealSub}>
+                P {item.protein}g · C {item.carbs}g · F {item.fat}g
+              </Text>
+            )}
+            <Text style={styles.mealSub}>
+              {new Date(item.date).toLocaleDateString()}
+            </Text>
           </View>
         )}
       />
@@ -35,10 +48,19 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
   },
+  centered: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 16,
+  },
+  error: {
+    color: 'red',
+    marginBottom: 8,
   },
   mealItem: {
     padding: 16,
@@ -51,8 +73,8 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
-  mealCalories: {
-    fontSize: 16,
+  mealSub: {
+    fontSize: 14,
     color: '#555',
   },
 });

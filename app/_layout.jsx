@@ -1,12 +1,12 @@
-import {Tabs} from "expo-router";
+import { Stack } from "expo-router";
+import { FitnessProvider } from "../context/FitnessContext";
 
-const TabsLayout = () => {
+const RootLayout = () => {
   return (
-    <>
-      <Tabs>
-        <Tabs.Screen/>
-      </Tabs>
-    </>
-  )
-}
+    <FitnessProvider>
+      <Stack screenOptions={{ headerShown: false }} />
+    </FitnessProvider>
+  );
+};
 
+export default RootLayout;

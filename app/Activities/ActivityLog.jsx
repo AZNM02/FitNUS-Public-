@@ -1,31 +1,40 @@
-import React, { useEffect, useState } from 'react';
-import { Text, View, FlatList, StyleSheet} from "react-native";
-import axios from 'axios';
+import React, { useEffect } from 'react';
+import { ActivityIndicator, FlatList, StyleSheet, Text, View } from 'react-native';
+import { useFitnessContext } from '../../context/FitnessContext';
 
 const ActivityLog = () => {
-  const [exercises, setExercises] = useState([]);
+  const { exercises, isLoading, error, refreshExercises } = useFitnessContext();
 
   useEffect(() => {
-    const apiBaseUrl = process.env.EXPO_PUBLIC_API_BASE_URL;
-    axios.get(`${apiBaseUrl}/exercises`).then(exercises => setExercises(exercises.data)).catch((e)=>console.log(e))
-
-   
+    refreshExercises();
   }, []);
+
+  if (isLoading) {
+    return (
+      <View style={styles.centered}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Activity Log</Text>
+      {error && <Text style={styles.error}>{error}</Text>}
       <FlatList
         data={exercises}
         keyExtractor={(item) => item._id}
         renderItem={({ item }) => (
-          <View style={styles.ExerciseItem}>
-            <Text style={styles.ExerciseName}>{item.name}</Text>
-            <Text style={styles.ExerciseSub}>{item.duration}</Text>
-            <Text style={styles.ExerciseSub}>{item.weight}kg weight</Text>
-            <Text style={styles.ExerciseSub}>{item.reps} reps</Text>
-            <Text style={styles.ExerciseSub}>{item.distance} km travelled</Text>
-            <Text style={styles.ExerciseSub}>Date Added: {item.date}</Text>
+          <View style={styles.exerciseItem}>
+            <Text style={styles.exerciseName}>{item.name}</Text>
+            {item.duration != null && <Text style={styles.exerciseSub}>{item.duration} min</Text>}
+            {item.weight != null && <Text style={styles.exerciseSub}>{item.weight} kg</Text>}
+            {item.reps != null && <Text style={styles.exerciseSub}>{item.reps} reps</Text>}
+            {item.distance != null && <Text style={styles.exerciseSub}>{item.distance} km</Text>}
+            {item.notes && <Text style={styles.exerciseSub}>{item.notes}</Text>}
+            <Text style={styles.exerciseSub}>
+              {new Date(item.date).toLocaleDateString()}
+            </Text>
           </View>
         )}
       />
@@ -38,23 +47,32 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
   },
+  centered: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 16,
   },
-  ExerciseItem: {
+  error: {
+    color: 'red',
+    marginBottom: 8,
+  },
+  exerciseItem: {
     padding: 16,
     marginVertical: 8,
     borderColor: '#ccc',
     borderWidth: 1,
     borderRadius: 8,
   },
-  ExerciseName: {
+  exerciseName: {
     fontSize: 18,
     fontWeight: 'bold',
   },
-  ExerciseSub: {
+  exerciseSub: {
     fontSize: 14,
     color: '#555',
   },
