@@ -29,7 +29,7 @@ function Home() {
         />
         <Button
           title="Workout Schedule"
-          handlePress={() => router.push('/Schedule/Schedule')}
+          handlePress={() => router.push('/Schedule')}
           style={[styles.button, styles.scheduleButton]}
           textStyle={styles.buttonText}
         />

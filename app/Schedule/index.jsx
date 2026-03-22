@@ -1,10 +1,11 @@
 export const dynamic = 'force-dynamic';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   SafeAreaView, View, Text, TouchableOpacity, Modal,
   TextInput, Button, FlatList, StyleSheet, ScrollView,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useFocusEffect } from 'expo-router';
 
 function getWeekDays(weekOffset) {
   const days = [];
@@ -30,15 +31,14 @@ export default function Schedule() {
   const [newWorkout, setNewWorkout] = useState('');
   const [scheduledWorkouts, setScheduledWorkouts] = useState([]);
 
-  useEffect(() => {
-    AsyncStorage.getItem('scheduledWorkouts').then(val => {
-      if (val) setScheduledWorkouts(JSON.parse(val));
-    }).catch(() => {});
-  }, []);
-
-  useEffect(() => {
-    AsyncStorage.setItem('scheduledWorkouts', JSON.stringify(scheduledWorkouts)).catch(() => {});
-  }, [scheduledWorkouts]);
+  // Reload from storage every time the screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      AsyncStorage.getItem('scheduledWorkouts')
+        .then(val => { setScheduledWorkouts(val ? JSON.parse(val) : []); })
+        .catch(e => console.error('[Schedule] Failed to load workouts:', e));
+    }, [])
+  );
 
   const weekDays = getWeekDays(weekOffset);
 
@@ -48,11 +48,12 @@ export default function Schedule() {
   });
 
   const addWorkout = () => {
-    if (newWorkout.trim()) {
-      setScheduledWorkouts(prev => [...prev, { name: newWorkout.trim(), date: selectedDate.toISOString() }]);
-      setNewWorkout('');
-      setModalVisible(false);
-    }
+    if (!newWorkout.trim()) return;
+    const updated = [...scheduledWorkouts, { name: newWorkout.trim(), date: selectedDate.toISOString() }];
+    setScheduledWorkouts(updated);
+    AsyncStorage.setItem('scheduledWorkouts', JSON.stringify(updated)).catch(e => console.error('[Schedule] Failed to save workouts:', e));
+    setNewWorkout('');
+    setModalVisible(false);
   };
 
   return (
