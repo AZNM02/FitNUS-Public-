@@ -1,6 +1,7 @@
-import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
+import { StyleSheet, Text, TextInput, View, TouchableOpacity } from 'react-native';
 import { useState } from 'react';
 import { useFitnessContext } from '../../context/FitnessContext';
+import { colors, radius, spacing } from '../../constants/theme';
 
 const AddExercise = () => {
   const { addExercise } = useFitnessContext();
@@ -58,36 +59,59 @@ const AddExercise = () => {
   }
 
   return (
-    <View>
-      <Text style={styles.title}>Add an exercise</Text>
+    <View style={styles.container}>
+      <Text style={styles.title}>Add an Exercise</Text>
       {error !== '' && <Text style={styles.error}>{error}</Text>}
-      <TextInput value={ExerciseName} onChangeText={SetExerciseName} placeholder="Exercise Name" style={styles.input} />
-      <TextInput value={ExerciseDuration} onChangeText={SetExerciseDuration} placeholder="Duration (minutes)" style={styles.input} keyboardType="numeric" />
-      <TextInput value={Weight} onChangeText={Setweight} placeholder="Weight (kg)" style={styles.input} keyboardType="numeric" />
-      <TextInput value={Reps} onChangeText={SetReps} placeholder="Reps" style={styles.input} keyboardType="numeric" />
-      <TextInput value={Distance} onChangeText={SetDistance} placeholder="Distance travelled (km)" style={styles.input} keyboardType="numeric" />
-      <Button title="Add" onPress={exerciseadd} />
+      <TextInput value={ExerciseName} onChangeText={SetExerciseName} placeholder="Exercise Name" placeholderTextColor={colors.textMuted} style={styles.input} />
+      <TextInput value={ExerciseDuration} onChangeText={SetExerciseDuration} placeholder="Duration (minutes)" placeholderTextColor={colors.textMuted} style={styles.input} keyboardType="numeric" />
+      <TextInput value={Weight} onChangeText={Setweight} placeholder="Weight (kg)" placeholderTextColor={colors.textMuted} style={styles.input} keyboardType="numeric" />
+      <TextInput value={Reps} onChangeText={SetReps} placeholder="Reps" placeholderTextColor={colors.textMuted} style={styles.input} keyboardType="numeric" />
+      <TextInput value={Distance} onChangeText={SetDistance} placeholder="Distance travelled (km)" placeholderTextColor={colors.textMuted} style={styles.input} keyboardType="numeric" />
+      <TouchableOpacity style={styles.addBtn} onPress={exerciseadd}>
+        <Text style={styles.addBtnText}>Add Exercise</Text>
+      </TouchableOpacity>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  input: {
-    height: 40,
-    margin: 12,
-    borderWidth: 1,
-    padding: 10,
+  container: {
+    flex: 1,
+    backgroundColor: colors.bg,
+    padding: spacing.md,
+    paddingTop: spacing.lg,
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 5,
-    marginLeft: 100,
+    fontWeight: '800',
+    color: colors.textPrimary,
+    marginBottom: spacing.md,
   },
   error: {
-    color: 'red',
-    marginHorizontal: 12,
-    marginBottom: 4,
+    color: colors.error,
+    marginBottom: spacing.xs,
+  },
+  input: {
+    backgroundColor: colors.inputBg,
+    borderWidth: 1,
+    borderColor: colors.inputBorder,
+    borderRadius: radius.sm,
+    padding: 12,
+    marginBottom: spacing.sm,
+    color: colors.textPrimary,
+    fontSize: 15,
+  },
+  addBtn: {
+    backgroundColor: colors.accentOrange,
+    borderRadius: radius.md,
+    padding: 14,
+    alignItems: 'center',
+    marginTop: spacing.xs,
+  },
+  addBtnText: {
+    color: '#1A1A1A',
+    fontSize: 16,
+    fontWeight: '700',
   },
 });
 

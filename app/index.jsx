@@ -3,48 +3,49 @@ export const dynamic = 'force-dynamic';
 import { Text, View, Image, StyleSheet } from "react-native";
 import Button from '../components/Button';
 import { router } from "expo-router";
+import { colors, radius, spacing } from '../constants/theme';
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f0f4f7',
-    padding: 20,
+    backgroundColor: colors.bg,
+    padding: spacing.lg,
   },
   image: {
     width: 150,
     height: 150,
-    marginBottom: 20,
+    marginBottom: spacing.lg,
   },
   title: {
     fontWeight: 'bold',
-    fontSize: 24,
-    color: '#333',
-    marginBottom: 10,
+    fontSize: 26,
+    color: colors.textPrimary,
+    marginBottom: spacing.xs,
   },
   subtitle: {
-    fontSize: 16,
-    color: '#666',
-    marginBottom: 30,
+    fontSize: 15,
+    color: colors.textSecondary,
+    marginBottom: spacing.lg,
     textAlign: 'center',
     paddingHorizontal: 20,
   },
   buttonContainer: {
-    marginTop: 20,
+    marginTop: spacing.md,
     width: '100%',
     alignItems: 'center',
   },
   button: {
-    backgroundColor: '#007BFF',
+    backgroundColor: colors.accentYellow,
     paddingVertical: 15,
     paddingHorizontal: 30,
-    borderRadius: 25,
+    borderRadius: 30,
   },
   buttonText: {
-    color: '#fff',
+    color: '#1A1A1A',
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '700',
   },
 });
 
@@ -55,10 +56,8 @@ export default function Index() {
         source={require('@/assets/images/FitNUS.png')}
         style={styles.image}
       />
-      
       <Text style={styles.title}>Welcome to FitNUS!</Text>
       <Text style={styles.subtitle}>Your journey to fitness starts here. Let's get started!</Text>
-      
       <View style={styles.buttonContainer}>
         <Button
           title="Start"

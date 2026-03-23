@@ -2,10 +2,11 @@ export const dynamic = 'force-dynamic';
 import React, { useState, useCallback } from 'react';
 import {
   SafeAreaView, View, Text, TouchableOpacity, Modal,
-  TextInput, Button, FlatList, StyleSheet, ScrollView,
+  TextInput, FlatList, StyleSheet, ScrollView,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from 'expo-router';
+import { colors, radius, spacing } from '../../constants/theme';
 
 function getWeekDays(weekOffset) {
   const days = [];
@@ -31,7 +32,6 @@ export default function Schedule() {
   const [newWorkout, setNewWorkout] = useState('');
   const [scheduledWorkouts, setScheduledWorkouts] = useState([]);
 
-  // Reload from storage every time the screen comes into focus
   useFocusEffect(
     useCallback(() => {
       AsyncStorage.getItem('scheduledWorkouts')
@@ -57,7 +57,7 @@ export default function Schedule() {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: colors.bg }}>
       <View style={styles.container}>
         <Text style={styles.title}>Workout Schedule</Text>
 
@@ -132,12 +132,17 @@ export default function Schedule() {
             <TextInput
               style={styles.input}
               placeholder="Workout name"
+              placeholderTextColor={colors.textMuted}
               value={newWorkout}
               onChangeText={setNewWorkout}
             />
-            <Button title="Add" onPress={addWorkout} />
+            <TouchableOpacity style={styles.modalAddBtn} onPress={addWorkout}>
+              <Text style={styles.modalAddBtnText}>Add</Text>
+            </TouchableOpacity>
             <View style={{ height: 8 }} />
-            <Button title="Cancel" onPress={() => setModalVisible(false)} color="red" />
+            <TouchableOpacity style={styles.modalCancelBtn} onPress={() => setModalVisible(false)}>
+              <Text style={styles.modalCancelBtnText}>Cancel</Text>
+            </TouchableOpacity>
           </View>
         </View>
       </Modal>
@@ -146,46 +151,58 @@ export default function Schedule() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, paddingHorizontal: 16, paddingVertical: 16 },
-  title: { fontSize: 28, fontWeight: '700', color: '#1d1d1d', marginBottom: 16 },
-  weekNav: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 },
+  container: { flex: 1, paddingHorizontal: spacing.md, paddingVertical: spacing.md, backgroundColor: colors.bg },
+  title: { fontSize: 28, fontWeight: '800', color: colors.textPrimary, marginBottom: spacing.md },
+  weekNav: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: spacing.sm },
   navBtn: { padding: 8 },
-  navBtnText: { fontSize: 28, color: '#007aff' },
-  weekLabel: { fontSize: 15, fontWeight: '600', color: '#333' },
-  dayRow: { flexDirection: 'row', marginBottom: 16 },
+  navBtnText: { fontSize: 28, color: colors.accentBlue },
+  weekLabel: { fontSize: 15, fontWeight: '600', color: colors.textSecondary },
+  dayRow: { flexDirection: 'row', marginBottom: spacing.md },
   dayCell: {
     width: 44, alignItems: 'center', paddingVertical: 8,
-    marginHorizontal: 3, borderRadius: 10, borderWidth: 1, borderColor: '#e3e3e3',
+    marginHorizontal: 3, borderRadius: radius.sm, borderWidth: 1, borderColor: colors.cardBorder,
+    backgroundColor: colors.card,
   },
-  dayCellActive: { backgroundColor: '#111', borderColor: '#111' },
-  dayName: { fontSize: 12, color: '#888' },
-  dayNum: { fontSize: 16, fontWeight: '600', color: '#111' },
-  dayTextActive: { color: '#fff' },
-  subtitle: { fontSize: 15, fontWeight: '600', color: '#999', marginBottom: 8 },
+  dayCellActive: { backgroundColor: colors.accentBlue, borderColor: colors.accentBlue },
+  dayName: { fontSize: 12, color: colors.textSecondary },
+  dayNum: { fontSize: 16, fontWeight: '600', color: colors.textPrimary },
+  dayTextActive: { color: '#1A1A1A' },
+  subtitle: { fontSize: 14, fontWeight: '600', color: colors.textMuted, marginBottom: spacing.xs },
   listContainer: { flex: 1 },
   empty: {
-    borderWidth: 1, borderColor: '#e5e7eb', borderStyle: 'dashed',
-    borderRadius: 9, padding: 20, alignItems: 'center',
+    borderWidth: 1, borderColor: colors.cardBorder, borderStyle: 'dashed',
+    borderRadius: radius.sm, padding: 20, alignItems: 'center',
   },
-  emptyText: { color: '#aaa' },
+  emptyText: { color: colors.textMuted },
   workoutItem: {
-    padding: 12, marginBottom: 8, borderRadius: 8,
-    backgroundColor: '#f0f4ff', borderWidth: 1, borderColor: '#c7d2fe',
+    padding: 12, marginBottom: 8, borderRadius: radius.sm,
+    backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder,
   },
-  workoutName: { fontSize: 16, color: '#1e40af' },
+  workoutName: { fontSize: 15, color: colors.accentPurple, fontWeight: '600' },
   addBtn: {
-    backgroundColor: '#007aff', padding: 14,
-    borderRadius: 10, alignItems: 'center', marginTop: 12,
+    backgroundColor: colors.accentPurple, padding: 14,
+    borderRadius: radius.md, alignItems: 'center', marginTop: spacing.sm,
   },
-  addBtnText: { color: '#fff', fontSize: 16, fontWeight: '600' },
-  overlay: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.4)' },
+  addBtnText: { color: '#1A1A1A', fontSize: 16, fontWeight: '700' },
+  overlay: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.6)' },
   modal: {
-    width: '80%', backgroundColor: '#fff', borderRadius: 16,
-    padding: 24, elevation: 5,
+    width: '80%', backgroundColor: colors.modalBg, borderRadius: radius.md,
+    padding: spacing.lg, borderWidth: 1, borderColor: colors.cardBorder,
   },
-  modalTitle: { fontSize: 18, fontWeight: '700', marginBottom: 12 },
+  modalTitle: { fontSize: 18, fontWeight: '700', marginBottom: spacing.sm, color: colors.textPrimary },
   input: {
-    borderWidth: 1, borderColor: '#ccc', borderRadius: 8,
-    padding: 10, marginBottom: 12, fontSize: 15,
+    borderWidth: 1, borderColor: colors.inputBorder, borderRadius: radius.sm,
+    padding: 10, marginBottom: spacing.sm, fontSize: 15,
+    backgroundColor: colors.inputBg, color: colors.textPrimary,
   },
+  modalAddBtn: {
+    backgroundColor: colors.accentPurple, borderRadius: radius.sm,
+    padding: 12, alignItems: 'center',
+  },
+  modalAddBtnText: { color: '#1A1A1A', fontWeight: '700', fontSize: 15 },
+  modalCancelBtn: {
+    backgroundColor: 'rgba(255,255,255,0.10)', borderRadius: radius.sm,
+    padding: 12, alignItems: 'center',
+  },
+  modalCancelBtnText: { color: colors.textSecondary, fontWeight: '600', fontSize: 15 },
 });

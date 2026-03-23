@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import { useFitnessContext } from '../../context/FitnessContext';
+import { colors, radius, spacing } from '../../constants/theme';
 
 // ── Edit modal ───────────────────────────────────────────────
 
@@ -51,11 +52,11 @@ const EditModal = ({ item, onClose, onSave }) => {
         <View style={styles.modalCard}>
           <Text style={styles.modalTitle}>Edit Meal</Text>
           {error !== '' && <Text style={styles.error}>{error}</Text>}
-          <TextInput style={styles.input} value={name} onChangeText={setName} placeholder="Meal Name" />
-          <TextInput style={styles.input} value={calories} onChangeText={setCalories} placeholder="Calories" keyboardType="numeric" />
-          <TextInput style={styles.input} value={protein} onChangeText={setProtein} placeholder="Protein (g)" keyboardType="numeric" />
-          <TextInput style={styles.input} value={carbs} onChangeText={setCarbs} placeholder="Carbs (g)" keyboardType="numeric" />
-          <TextInput style={styles.input} value={fat} onChangeText={setFat} placeholder="Fat (g)" keyboardType="numeric" />
+          <TextInput style={styles.input} value={name} onChangeText={setName} placeholder="Meal Name" placeholderTextColor={colors.textMuted} />
+          <TextInput style={styles.input} value={calories} onChangeText={setCalories} placeholder="Calories" placeholderTextColor={colors.textMuted} keyboardType="numeric" />
+          <TextInput style={styles.input} value={protein} onChangeText={setProtein} placeholder="Protein (g)" placeholderTextColor={colors.textMuted} keyboardType="numeric" />
+          <TextInput style={styles.input} value={carbs} onChangeText={setCarbs} placeholder="Carbs (g)" placeholderTextColor={colors.textMuted} keyboardType="numeric" />
+          <TextInput style={styles.input} value={fat} onChangeText={setFat} placeholder="Fat (g)" placeholderTextColor={colors.textMuted} keyboardType="numeric" />
           <View style={styles.modalButtons}>
             <TouchableOpacity style={[styles.modalBtn, styles.cancelBtn]} onPress={onClose}>
               <Text style={styles.modalBtnText}>Cancel</Text>
@@ -105,7 +106,7 @@ const Nutrition = () => {
   if (isLoading) {
     return (
       <View style={styles.centered}>
-        <ActivityIndicator size="large" />
+        <ActivityIndicator size="large" color={colors.accentGreen} />
       </View>
     );
   }
@@ -156,46 +157,54 @@ const Nutrition = () => {
 // ── Styles ───────────────────────────────────────────────────
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16 },
-  centered: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  title: { fontSize: 24, fontWeight: 'bold', marginBottom: 16 },
-  error: { color: 'red', marginBottom: 8 },
+  container: { flex: 1, padding: spacing.md, backgroundColor: colors.bg },
+  centered: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.bg },
+  title: { fontSize: 26, fontWeight: '800', marginBottom: spacing.md, color: colors.textPrimary },
+  error: { color: colors.error, marginBottom: spacing.xs },
   mealItem: {
-    padding: 16,
+    padding: spacing.md,
     marginVertical: 4,
-    borderColor: '#ccc',
+    borderColor: colors.cardBorder,
     borderWidth: 1,
-    borderRadius: 8,
-    backgroundColor: '#fff',
+    borderRadius: radius.md,
+    backgroundColor: colors.card,
   },
   itemHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  mealName: { fontSize: 18, fontWeight: 'bold' },
-  mealSub: { fontSize: 14, color: '#555' },
-  editBtn: { color: '#66bb6a', fontWeight: '600' },
+  mealName: { fontSize: 17, fontWeight: '700', color: colors.textPrimary },
+  mealSub: { fontSize: 13, color: colors.textSecondary, marginTop: 2 },
+  editBtn: { color: colors.accentGreen, fontWeight: '600' },
   deleteAction: {
-    backgroundColor: '#e53935',
+    backgroundColor: colors.deleteRed,
     justifyContent: 'center',
     alignItems: 'center',
     width: 80,
     marginVertical: 4,
-    borderRadius: 8,
+    borderRadius: radius.md,
   },
   deleteActionText: { color: '#fff', fontWeight: 'bold' },
   // Modal
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.4)',
+    backgroundColor: 'rgba(0,0,0,0.6)',
     justifyContent: 'center',
-    padding: 24,
+    padding: spacing.lg,
   },
-  modalCard: { backgroundColor: '#fff', borderRadius: 12, padding: 20 },
-  modalTitle: { fontSize: 20, fontWeight: 'bold', marginBottom: 12 },
-  input: { borderWidth: 1, borderColor: '#ccc', borderRadius: 6, padding: 10, marginBottom: 8 },
-  modalButtons: { flexDirection: 'row', justifyContent: 'flex-end', gap: 8, marginTop: 8 },
-  modalBtn: { paddingVertical: 10, paddingHorizontal: 20, borderRadius: 8 },
-  cancelBtn: { backgroundColor: '#9e9e9e' },
-  saveBtn: { backgroundColor: '#66bb6a' },
-  modalBtnText: { color: '#fff', fontWeight: '600' },
+  modalCard: { backgroundColor: colors.modalBg, borderRadius: radius.md, padding: 20, borderWidth: 1, borderColor: colors.cardBorder },
+  modalTitle: { fontSize: 20, fontWeight: '700', marginBottom: spacing.sm, color: colors.textPrimary },
+  input: {
+    borderWidth: 1,
+    borderColor: colors.inputBorder,
+    borderRadius: radius.sm,
+    padding: 10,
+    marginBottom: spacing.xs,
+    backgroundColor: colors.inputBg,
+    color: colors.textPrimary,
+  },
+  modalButtons: { flexDirection: 'row', justifyContent: 'flex-end', gap: 8, marginTop: spacing.xs },
+  modalBtn: { paddingVertical: 10, paddingHorizontal: 20, borderRadius: radius.sm },
+  cancelBtn: { backgroundColor: 'rgba(255,255,255,0.12)' },
+  saveBtn: { backgroundColor: colors.accentGreen },
+  modalBtnText: { color: '#1A1A1A', fontWeight: '700' },
 });
 
 export default Nutrition;
