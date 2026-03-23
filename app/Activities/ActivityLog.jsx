@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
+  Alert,
   FlatList,
   Modal,
   StyleSheet,
@@ -107,8 +108,14 @@ const ActivityLog = () => {
     <TouchableOpacity
       style={styles.deleteAction}
       onPress={() => {
-        swipeableRefs.current[item._id]?.close();
-        handleDelete(item._id);
+        Alert.alert(
+          'Delete Exercise',
+          `Remove "${item.name}"? This cannot be undone.`,
+          [
+            { text: 'Cancel', style: 'cancel', onPress: () => swipeableRefs.current[item._id]?.close() },
+            { text: 'Delete', style: 'destructive', onPress: () => handleDelete(item._id) },
+          ]
+        );
       }}
     >
       <Text style={styles.deleteActionText}>Delete</Text>

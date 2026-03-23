@@ -8,9 +8,11 @@ const AddExercise = () => {
 
   const [ExerciseName, SetExerciseName] = useState('');
   const [ExerciseDuration, SetExerciseDuration] = useState('');
+  const [Sets, SetSets] = useState('');
   const [Weight, Setweight] = useState('');
   const [Reps, SetReps] = useState('');
   const [Distance, SetDistance] = useState('');
+  const [Notes, SetNotes] = useState('');
   const [error, setError] = useState('');
 
   const parseOptionalFloat = (val: string) => {
@@ -27,6 +29,7 @@ const AddExercise = () => {
     }
     const numericFields = [
       { label: 'Duration', val: ExerciseDuration },
+      { label: 'Sets', val: Sets },
       { label: 'Weight', val: Weight },
       { label: 'Reps', val: Reps },
       { label: 'Distance', val: Distance },
@@ -41,16 +44,20 @@ const AddExercise = () => {
     addExercise({
       name: ExerciseName.trim(),
       duration: parseOptionalFloat(ExerciseDuration),
+      sets: parseOptionalFloat(Sets),
       weight: parseOptionalFloat(Weight),
       reps: parseOptionalFloat(Reps),
       distance: parseOptionalFloat(Distance),
+      notes: Notes.trim() || undefined,
     })
       .then(() => {
         SetExerciseName('');
         SetExerciseDuration('');
+        SetSets('');
         Setweight('');
         SetReps('');
         SetDistance('');
+        SetNotes('');
       })
       .catch((e: any) => {
         const msg = e.response?.data?.errors?.[0]?.msg ?? e.message;
@@ -64,9 +71,11 @@ const AddExercise = () => {
       {error !== '' && <Text style={styles.error}>{error}</Text>}
       <TextInput value={ExerciseName} onChangeText={SetExerciseName} placeholder="Exercise Name" placeholderTextColor={colors.textMuted} style={styles.input} />
       <TextInput value={ExerciseDuration} onChangeText={SetExerciseDuration} placeholder="Duration (minutes)" placeholderTextColor={colors.textMuted} style={styles.input} keyboardType="numeric" />
+      <TextInput value={Sets} onChangeText={SetSets} placeholder="Sets" placeholderTextColor={colors.textMuted} style={styles.input} keyboardType="numeric" />
       <TextInput value={Weight} onChangeText={Setweight} placeholder="Weight (kg)" placeholderTextColor={colors.textMuted} style={styles.input} keyboardType="numeric" />
       <TextInput value={Reps} onChangeText={SetReps} placeholder="Reps" placeholderTextColor={colors.textMuted} style={styles.input} keyboardType="numeric" />
       <TextInput value={Distance} onChangeText={SetDistance} placeholder="Distance travelled (km)" placeholderTextColor={colors.textMuted} style={styles.input} keyboardType="numeric" />
+      <TextInput value={Notes} onChangeText={SetNotes} placeholder="Notes (optional)" placeholderTextColor={colors.textMuted} style={styles.input} />
       <TouchableOpacity style={styles.addBtn} onPress={exerciseadd}>
         <Text style={styles.addBtnText}>Add Exercise</Text>
       </TouchableOpacity>

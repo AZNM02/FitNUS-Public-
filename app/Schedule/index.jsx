@@ -42,10 +42,9 @@ export default function Schedule() {
 
   const weekDays = getWeekDays(weekOffset);
 
-  const workoutsForDay = scheduledWorkouts.filter(w => {
-    const d = new Date(w.date);
-    return d.toDateString() === selectedDate.toDateString();
-  });
+  const workoutsForDay = scheduledWorkouts
+    .map((w, i) => ({ ...w, _idx: i }))
+    .filter(w => new Date(w.date).toDateString() === selectedDate.toDateString());
 
   const addWorkout = () => {
     if (!newWorkout.trim()) return;
@@ -54,6 +53,12 @@ export default function Schedule() {
     AsyncStorage.setItem('scheduledWorkouts', JSON.stringify(updated)).catch(e => console.error('[Schedule] Failed to save workouts:', e));
     setNewWorkout('');
     setModalVisible(false);
+  };
+
+  const deleteWorkout = (idx) => {
+    const updated = scheduledWorkouts.filter((_, i) => i !== idx);
+    setScheduledWorkouts(updated);
+    AsyncStorage.setItem('scheduledWorkouts', JSON.stringify(updated)).catch(e => console.error('[Schedule] Failed to save workouts:', e));
   };
 
   return (
@@ -110,6 +115,9 @@ export default function Schedule() {
               renderItem={({ item }) => (
                 <View style={styles.workoutItem}>
                   <Text style={styles.workoutName}>{item.name}</Text>
+                  <TouchableOpacity onPress={() => deleteWorkout(item._idx)} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+                    <Text style={styles.workoutDeleteBtn}>✕</Text>
+                  </TouchableOpacity>
                 </View>
               )}
             />
@@ -177,8 +185,10 @@ const styles = StyleSheet.create({
   workoutItem: {
     padding: 12, marginBottom: 8, borderRadius: radius.sm,
     backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder,
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
   },
-  workoutName: { fontSize: 15, color: colors.accentPurple, fontWeight: '600' },
+  workoutName: { fontSize: 15, color: colors.accentPurple, fontWeight: '600', flex: 1 },
+  workoutDeleteBtn: { color: colors.deleteRed, fontSize: 15, fontWeight: '700', marginLeft: 8 },
   addBtn: {
     backgroundColor: colors.accentPurple, padding: 14,
     borderRadius: radius.md, alignItems: 'center', marginTop: spacing.sm,

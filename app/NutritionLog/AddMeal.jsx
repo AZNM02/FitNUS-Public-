@@ -8,7 +8,16 @@ const AddMeal = () => {
 
   const [MealName, SetMealName] = useState('');
   const [Calories, SetCalories] = useState('');
+  const [Protein, SetProtein] = useState('');
+  const [Carbs, SetCarbs] = useState('');
+  const [Fat, SetFat] = useState('');
   const [error, setError] = useState('');
+
+  const parseOptionalFloat = (val) => {
+    if (val.trim() === '') return undefined;
+    const n = parseFloat(val);
+    return isNaN(n) || n < 0 ? null : n;
+  };
 
   function mealadd() {
     setError('');
@@ -21,13 +30,28 @@ const AddMeal = () => {
       setError('Please enter a valid calorie amount.');
       return;
     }
+    for (const [label, val] of [['Protein', Protein], ['Carbs', Carbs], ['Fat', Fat]]) {
+      if (parseOptionalFloat(val) === null) {
+        setError(`${label} must be a valid non-negative number.`);
+        return;
+      }
+    }
 
-    addMeal({ name: MealName.trim(), calories: cal })
+    addMeal({
+      name: MealName.trim(),
+      calories: cal,
+      protein: parseOptionalFloat(Protein),
+      carbs: parseOptionalFloat(Carbs),
+      fat: parseOptionalFloat(Fat),
+    })
       .then(() => {
         SetMealName('');
         SetCalories('');
+        SetProtein('');
+        SetCarbs('');
+        SetFat('');
       })
-      .catch((e: any) => {
+      .catch((e) => {
         const msg = e.response?.data?.errors?.[0]?.msg ?? e.message;
         setError(msg);
       });
@@ -48,6 +72,30 @@ const AddMeal = () => {
         value={Calories}
         onChangeText={SetCalories}
         placeholder="Calories"
+        placeholderTextColor={colors.textMuted}
+        style={styles.input}
+        keyboardType="numeric"
+      />
+      <TextInput
+        value={Protein}
+        onChangeText={SetProtein}
+        placeholder="Protein (g)"
+        placeholderTextColor={colors.textMuted}
+        style={styles.input}
+        keyboardType="numeric"
+      />
+      <TextInput
+        value={Carbs}
+        onChangeText={SetCarbs}
+        placeholder="Carbs (g)"
+        placeholderTextColor={colors.textMuted}
+        style={styles.input}
+        keyboardType="numeric"
+      />
+      <TextInput
+        value={Fat}
+        onChangeText={SetFat}
+        placeholder="Fat (g)"
         placeholderTextColor={colors.textMuted}
         style={styles.input}
         keyboardType="numeric"
