@@ -2,36 +2,44 @@
 export const dynamic = 'force-dynamic';
 import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
 import { router } from "expo-router";
+import { FontAwesome5, MaterialCommunityIcons } from "@expo/vector-icons";
 import { colors, radius, spacing } from '../constants/theme';
 
 const features = [
   {
     title: 'Activity Log',
-    emoji: '🏋️',
+    icon: { lib: 'fa5', name: 'dumbbell' },
     accent: colors.accentOrange,
     route: '/Activities',
   },
   {
     title: 'Nutrition Log',
-    emoji: '🥗',
+    icon: { lib: 'mci', name: 'food-apple' },
     accent: colors.accentGreen,
     route: '/NutritionLog',
   },
   {
     title: 'Nearest Gyms',
-    emoji: '📍',
+    icon: { lib: 'fa5', name: 'map-marker-alt' },
     accent: colors.accentBlue,
     route: '/Gymfinder',
   },
   {
     title: 'Workout Schedule',
-    emoji: '📅',
+    icon: { lib: 'fa5', name: 'calendar-alt' },
     accent: colors.accentPurple,
     route: '/Schedule',
   },
 ];
 
-function FeatureCard({ title, emoji, accent, route }) {
+function FeatureIcon({ icon, accent }) {
+  if (icon.lib === 'fa5') {
+    return <FontAwesome5 name={icon.name} size={24} color={accent} />;
+  }
+  return <MaterialCommunityIcons name={icon.name} size={26} color={accent} />;
+}
+
+function FeatureCard({ title, icon, accent, route }) {
   return (
     <TouchableOpacity
       style={[styles.card, { borderColor: accent + '40' }]}
@@ -39,7 +47,7 @@ function FeatureCard({ title, emoji, accent, route }) {
       activeOpacity={0.75}
     >
       <View style={[styles.iconCircle, { backgroundColor: accent + '22' }]}>
-        <Text style={styles.emoji}>{emoji}</Text>
+        <FeatureIcon icon={icon} accent={accent} />
       </View>
       <Text style={styles.cardTitle}>{title}</Text>
       <View style={[styles.accentDot, { backgroundColor: accent }]} />
@@ -102,9 +110,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: spacing.sm,
-  },
-  emoji: {
-    fontSize: 26,
   },
   cardTitle: {
     fontSize: 15,
