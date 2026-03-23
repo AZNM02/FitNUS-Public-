@@ -1,9 +1,10 @@
 // Disable static rendering for this route (Expo Router web fix)
 export const dynamic = 'force-dynamic';
-import { Text, View, Image, StyleSheet } from "react-native";
+import { Text, View, StyleSheet } from "react-native";
 import Button from '../components/Button';
 import { router } from "expo-router";
 import { colors, radius, spacing } from '../constants/theme';
+import FitNUSLogo from '../components/FitNUSLogo';
 
 const styles = StyleSheet.create({
   container: {
@@ -13,11 +14,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.bg,
     padding: spacing.lg,
   },
-  image: {
-    width: 150,
-    height: 150,
-    marginBottom: spacing.lg,
-  },
+
   title: {
     fontWeight: 'bold',
     fontSize: 26,
@@ -52,10 +49,9 @@ const styles = StyleSheet.create({
 export default function Index() {
   return (
     <View style={styles.container}>
-      <Image
-        source={require('@/assets/images/FitNUS.png')}
-        style={styles.image}
-      />
+      <View style={{ marginBottom: spacing.lg }}>
+        <FitNUSLogo size={140} />
+      </View>
       <Text style={styles.title}>Welcome to FitNUS!</Text>
       <Text style={styles.subtitle}>Your journey to fitness starts here. Let's get started!</Text>
       <View style={styles.buttonContainer}>

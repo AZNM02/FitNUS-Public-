@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
     padding: 20,
     alignItems: 'flex-start',
     justifyContent: 'space-between',
-    minHeight: 140,
+    minHeight: 165,
   },
   iconCircle: {
     width: 52,
@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '700',
     color: colors.textPrimary,
-    flex: 1,
+    flexShrink: 1,
   },
   accentDot: {
     width: 8,
