@@ -1,10 +1,7 @@
 node_modules/
 .expo/
-<<<<<<< HEAD
 android/*
 ios/
-=======
->>>>>>> parent of c562f56 (Added android emulator support)
 dist/
 npm-debug.*
 .env
