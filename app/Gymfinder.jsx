@@ -36,34 +36,15 @@ const Gymfinder = () => {
   const mapRef = useRef(null);
 
   useEffect(() => {
-    let subscription = null;
-
     (async () => {
-      try {
-        const { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== 'granted') {
-          setErrorMsg('Permission to access location was denied.');
-          return;
-        }
-
-        // watchPositionAsync is more reliable than getCurrentPositionAsync on
-        // emulators — it picks up mock locations as soon as they are set.
-        subscription = await Location.watchPositionAsync(
-          { accuracy: Location.Accuracy.Balanced, timeInterval: 1000 },
-          (loc) => {
-            setLocation(loc);
-            subscription?.remove();
-            subscription = null;
-          }
-        );
-      } catch (e) {
-        setErrorMsg('Location unavailable. Please enable location services and try again.');
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        setErrorMsg('Permission to access location was denied.');
+        return;
       }
+      const loc = await Location.getCurrentPositionAsync({});
+      setLocation(loc);
     })();
-
-    return () => {
-      subscription?.remove();
-    };
   }, []);
 
   useEffect(() => {
