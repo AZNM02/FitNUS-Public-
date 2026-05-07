@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import { WebView } from 'react-native-webview';
 import * as Location from 'expo-location';
 import axios from 'axios';
 import { colors, radius, spacing } from '../constants/theme';
@@ -26,6 +26,39 @@ const Stars = ({ rating }) => {
   );
 };
 
+// ── Map HTML ─────────────────────────────────────────────────
+
+const getMapHtml = (lat, lng) => `<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"><\/script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #1a1a1a; }
+    #map { width: 100vw; height: 100vh; }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <script>
+    window.map = L.map('map', { zoomControl: true, attributionControl: true }).setView([${lat}, ${lng}], 14);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(window.map);
+    var userIcon = L.divIcon({
+      className: '',
+      html: '<div style="width:16px;height:16px;background:#3b82f6;border-radius:50%;border:3px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,0.5);"></div>',
+      iconSize: [16, 16],
+      iconAnchor: [8, 8]
+    });
+    L.marker([${lat}, ${lng}], { icon: userIcon }).addTo(window.map).bindPopup('You are here');
+  <\/script>
+</body>
+</html>`;
+
 // ── Main component ───────────────────────────────────────────
 
 const Gymfinder = () => {
@@ -33,7 +66,8 @@ const Gymfinder = () => {
   const [gyms, setGyms] = useState([]);
   const [errorMsg, setErrorMsg] = useState(null);
   const [selectedGym, setSelectedGym] = useState(null);
-  const mapRef = useRef(null);
+  const [isMapReady, setIsMapReady] = useState(false);
+  const webViewRef = useRef(null);
 
   useEffect(() => {
     (async () => {
@@ -53,6 +87,13 @@ const Gymfinder = () => {
     }
   }, [location]);
 
+  // Inject gym markers once map is ready and gyms are loaded
+  useEffect(() => {
+    if (isMapReady && gyms.length > 0) {
+      injectGymMarkers(gyms);
+    }
+  }, [isMapReady, gyms]);
+
   const fetchGyms = async (latitude, longitude) => {
     const apiKey = process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY;
     const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latitude},${longitude}&radius=5000&type=gym&key=${apiKey}`;
@@ -64,16 +105,35 @@ const Gymfinder = () => {
     }
   };
 
+  const injectGymMarkers = (gymList) => {
+    const gymsData = gymList.map(g => ({
+      lat: g.geometry.location.lat,
+      lng: g.geometry.location.lng,
+      name: g.name,
+    }));
+    const js = `
+      (function() {
+        var gymData = ${JSON.stringify(gymsData)};
+        var orangeIcon = L.divIcon({
+          className: '',
+          html: '<div style="width:22px;height:22px;background:#f97316;border-radius:50% 50% 50% 0;transform:rotate(-45deg) translate(-2px,2px);border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,0.4);"></div>',
+          iconSize: [22, 22],
+          iconAnchor: [11, 22]
+        });
+        gymData.forEach(function(gym) {
+          L.marker([gym.lat, gym.lng], { icon: orangeIcon })
+            .addTo(window.map)
+            .bindPopup(gym.name);
+        });
+      })();
+      true;
+    `;
+    webViewRef.current?.injectJavaScript(js);
+  };
+
   const panToGym = (gym) => {
-    mapRef.current?.animateToRegion(
-      {
-        latitude: gym.geometry.location.lat,
-        longitude: gym.geometry.location.lng,
-        latitudeDelta: 0.01,
-        longitudeDelta: 0.01,
-      },
-      600
-    );
+    const js = `window.map.setView([${gym.geometry.location.lat}, ${gym.geometry.location.lng}], 16); true;`;
+    webViewRef.current?.injectJavaScript(js);
   };
 
   if (errorMsg) {
@@ -95,38 +155,16 @@ const Gymfinder = () => {
   return (
     <View style={styles.container}>
       {/* Map */}
-      <MapView
-        ref={mapRef}
-        provider={PROVIDER_GOOGLE}
+      <WebView
+        ref={webViewRef}
         style={styles.map}
-        initialRegion={{
-          latitude: location.coords.latitude,
-          longitude: location.coords.longitude,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
-        }}
-      >
-        <Marker
-          coordinate={{
-            latitude: location.coords.latitude,
-            longitude: location.coords.longitude,
-          }}
-          title="You are here"
-          pinColor={colors.accentBlue}
-        />
-        {gyms.map((gym, index) => (
-          <Marker
-            key={index}
-            coordinate={{
-              latitude: gym.geometry.location.lat,
-              longitude: gym.geometry.location.lng,
-            }}
-            title={gym.name}
-            pinColor={colors.accentOrange}
-            onPress={() => setSelectedGym(gym)}
-          />
-        ))}
-      </MapView>
+        source={{ html: getMapHtml(location.coords.latitude, location.coords.longitude) }}
+        onLoadEnd={() => setIsMapReady(true)}
+        javaScriptEnabled
+        domStorageEnabled
+        originWhitelist={['*']}
+        mixedContentMode="always"
+      />
 
       {/* Gym list panel */}
       <View style={styles.listPanel}>
